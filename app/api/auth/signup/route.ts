@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         data: {
           username,
           password: hashedPassword,
-          role: Role.SUPER_ADMIN
+          role: Role.SUPERADMIN
         }
       })
       const { password: _, ...userWithoutPassword } = newSuperAdmin
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
       }
     })
 
-    if (!currentUser || currentUser.role !== Role.SUPER_ADMIN) {
+    if (!currentUser || currentUser.role !== Role.SUPERADMIN) {
       return NextResponse.json({ error: "Forbidden: Only Super Admin can create users" }, { status: 403 })
     }
 

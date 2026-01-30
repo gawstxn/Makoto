@@ -17,7 +17,7 @@ enum PaymentStatus {
 
 enum Role {
   ADMIN
-  SUPER_ADMIN
+  SUPERADMIN
 }
 
 // =============== Category ===============

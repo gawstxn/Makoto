@@ -1,8 +1,6 @@
 "use client"
 
 import { useSession, signOut } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
@@ -11,13 +9,6 @@ import { Label } from "@/components/ui/label"
 
 export default function HomePage() {
   const { data: session, status } = useSession()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/signin")
-    }
-  }, [status, router])
 
   if (status === "loading") {
     return <div className="p-10 text-center">Loading...</div>
