@@ -1,0 +1,21 @@
+name: DB Keepalive Cron
+
+on:
+  schedule:
+    - cron: "0 19 */3 * *"
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Call DB Keepalive API
+        run: |
+          curl -X GET "https://gawstxn-makoto.vercel.app/api/internal/cron/db-keepalive" \
+            -H "x-api-key: ${{ secrets.CRON_API_KEY }}" \
+            -H "User-Agent: github-actions-cron" \
+            --fail \
+            --show-error \
+            --silent
