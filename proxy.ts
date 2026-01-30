@@ -4,6 +4,11 @@ import type { NextRequest } from "next/server"
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  if (pathname.startsWith("/api/auth")) {
+    return NextResponse.next()
+  }
+
   // Api security
   if (pathname.startsWith("/api")) {
     const origin = request.headers.get("origin")
@@ -20,19 +25,12 @@ export async function proxy(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET
   })
 
-  if (pathname.startsWith("/admin")) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/signin", request.url))
-    }
+  if (pathname.startsWith("/admin") && !token) {
+    return NextResponse.redirect(new URL("/signin", request.url))
   }
 
-  if (pathname === "/signin") {
-    if (token) {
-      if (token.role === "SUPER_ADMIN" || token.role === "ADMIN") {
-        return NextResponse.redirect(new URL("/admin/dashboard", request.url))
-      }
-      return NextResponse.redirect(new URL("/", request.url))
-    }
+  if (pathname === "/signin" && token) {
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url))
   }
 
   return NextResponse.next()
