@@ -1,15 +1,21 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
 export const dynamic = "force-dynamic"
+export const revalidate = 0
 
-export async function GET() {
+const DB_TIMEOUT = 3000
+
+export async function GET(req: NextRequest) {
   try {
-    const startTime = performance.now()
+    if (req.headers.get("x-api-key") !== process.env.INTERNAL_API_KEY) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
+    const startTime = performance.now()
     const dbCheck = Promise.race([
       prisma.$queryRaw`SELECT 1`,
-      new Promise((_, reject) => setTimeout(() => reject(new Error("DB Timeout")), 3000))
+      new Promise((_, reject) => setTimeout(() => reject(new Error("DB Timeout")), DB_TIMEOUT))
     ])
     await dbCheck
     const dbLatency = Math.round(performance.now() - startTime)
@@ -32,9 +38,7 @@ export async function GET() {
       {
         status: 200,
         headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-          Pragma: "no-cache",
-          Expires: "0"
+          "Cache-Control": "no-store"
         }
       }
     )
@@ -51,7 +55,7 @@ export async function GET() {
       {
         status: 503,
         headers: {
-          "Cache-Control": "no-store, no-cache"
+          "Cache-Control": "no-store"
         }
       }
     )
