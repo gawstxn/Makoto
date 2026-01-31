@@ -1,8 +1,9 @@
+// components/auth/signin-form.tsx
 "use client"
 
 import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation" // เพิ่ม useSearchParams เพื่อดัก Error
-import { signIn } from "next-auth/react" // ✅ เรียกใช้ signIn ของจริง
+import { useRouter, useSearchParams } from "next/navigation"
+import { signIn } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -13,25 +14,25 @@ import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
+// ตรวจสอบ path นี้ว่าถูกต้องไหม (ถ้าไม่มีไฟล์นี้ ให้สร้าง validation schema ขึ้นมา)
 import { signInSchema } from "@/lib/validations/auth"
 
 export function SigninForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  // ⭐️ ดึง callbackUrl จาก URL ถ้าไม่มีให้ไป /admin/dashboard
+  const callbackUrl = searchParams.get("callbackUrl") || "/admin/dashboard"
+
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // ดักจับ Error จาก URL (กรณี NextAuth Redirect กลับมาเมื่อ Login พลาด)
   const [error, setError] = useState<string | null>(
     searchParams.get("error") === "CredentialsSignin" ? "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" : null
   )
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
-    defaultValues: {
-      username: "",
-      password: ""
-    }
+    defaultValues: { username: "", password: "" }
   })
 
   async function onSubmit(values: z.infer<typeof signInSchema>) {
@@ -39,21 +40,19 @@ export function SigninForm() {
     setError(null)
 
     try {
-      // ✅ เรียก NextAuth signIn
       const result = await signIn("credentials", {
         username: values.username,
         password: values.password,
-        redirect: false // ❌ ไม่ให้ Redirect อัตโนมัติ เราจะคุมเอง
+        redirect: false
       })
 
       if (result?.error) {
-        // กรณี Login พลาด
         console.error(result.error)
         setError("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
       } else if (result?.ok) {
-        // ✅ Login สำเร็จ
-        router.push("/admin/dashboard")
-        router.refresh() // รีโหลด Session ใหม่
+        // ⭐️ Redirect ไปยังหน้าที่ User พยายามจะเข้า (หรือ Dashboard)
+        router.push(callbackUrl)
+        router.refresh()
       }
     } catch (err) {
       setError("เกิดข้อผิดพลาดในการเชื่อมต่อ")
@@ -62,10 +61,12 @@ export function SigninForm() {
     }
   }
 
+  // ... (ส่วน return JSX ของคุณ เหมือนเดิมเป๊ะครับ) ...
   return (
     <div className="grid gap-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* ... ใส่ JSX เดิมของคุณตรงนี้ได้เลย ... */}
           <FormField
             control={form.control}
             name="username"

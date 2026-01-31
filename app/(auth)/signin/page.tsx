@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import Link from "next/link"
 import { ShieldCheck } from "lucide-react"
 import { SigninForm } from "@/components/auth/signin-form"
+import { Suspense } from "react"
 
 export const metadata: Metadata = {
   title: "Admin Login | Makoto Digital Key"
@@ -34,7 +35,9 @@ export default function SigninPage() {
             <p className="text-sm text-muted-foreground">กรอกข้อมูลเพื่อยืนยันตัวตน (NextAuth)</p>
           </div>
 
-          <SigninForm />
+          <Suspense fallback={<div></div>}>
+            <SigninForm />
+          </Suspense>
 
           <p className="px-8 text-center text-sm text-muted-foreground">
             <Link href="/" className="hover:text-primary underline underline-offset-4">
