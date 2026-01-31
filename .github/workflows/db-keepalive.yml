@@ -13,8 +13,8 @@ jobs:
     steps:
       - name: Call DB Keepalive API
         run: |
-          curl -X GET "https://gawstxn-makoto.vercel.app/api/internal/cron/db-keepalive" \
-            -H "x-api-key: ${{ secrets.CRON_API_KEY }}" \
+          curl -X GET "https://gawstxn-makoto.vercel.app/api/cron/db-keepalive" \
+            -H "x-api-key: ${{ secrets.CRON_API_SECRET }}" \
             -H "User-Agent: github-actions-cron" \
             --fail \
             --show-error \
