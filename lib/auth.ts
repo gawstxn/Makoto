@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import prisma from "@/lib/prisma"
 import { checkRateLimit } from "./ratelimit"
+import { signInSchema } from "./validations/auth"
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -21,16 +22,17 @@ export const authOptions: NextAuthOptions = {
           throw new Error("TooManyRequests")
         }
 
-        if (!credentials?.username || !credentials?.password) {
+        const result = signInSchema.safeParse(credentials)
+        if (!result.success) {
           throw new Error("MissingCredentials")
         }
 
         const user = await prisma.user.findUnique({
-          where: { username: credentials.username }
+          where: { username: result.data.username }
         })
         if (!user) return null
 
-        const isValid = await bcrypt.compare(credentials.password, user.password)
+        const isValid = await bcrypt.compare(result.data.password, user.password)
         if (!isValid) return null
 
         return {
