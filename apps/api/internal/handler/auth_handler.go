@@ -3,7 +3,7 @@ package handler
 import (
 	"errors"
 
-	"github.com/gawstxn/makoto/api/internal/dto/request"
+	"github.com/gawstxn/makoto/api/internal/dto"
 	"github.com/gawstxn/makoto/api/internal/service"
 	"github.com/gawstxn/makoto/api/pkg/response"
 	"github.com/gin-gonic/gin"
@@ -20,9 +20,20 @@ func NewAuthHandler(userService service.UserService) *AuthHandler {
 }
 
 // Register handles user registration.
-// POST /api/v1/auth/register
+//
+//	@Summary		Register a new user
+//	@Description	Create a new user account and return JWT tokens
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		dto.RegisterRequest	true	"Register request"
+//	@Success		201		{object}	response.Response{data=dto.AuthResponse}
+//	@Failure		400		{object}	response.Response
+//	@Failure		409		{object}	response.Response
+//	@Failure		500		{object}	response.Response
+//	@Router			/auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
-	var req request.RegisterRequest
+	var req dto.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.BadRequest(c, "Invalid request body", err.Error())
 		return
@@ -42,9 +53,20 @@ func (h *AuthHandler) Register(c *gin.Context) {
 }
 
 // Login handles user authentication.
-// POST /api/v1/auth/login
+//
+//	@Summary		Login
+//	@Description	Authenticate a user and return JWT tokens
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		dto.LoginRequest	true	"Login request"
+//	@Success		200		{object}	response.Response{data=dto.AuthResponse}
+//	@Failure		400		{object}	response.Response
+//	@Failure		401		{object}	response.Response
+//	@Failure		500		{object}	response.Response
+//	@Router			/auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
-	var req request.LoginRequest
+	var req dto.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.BadRequest(c, "Invalid request body", err.Error())
 		return
@@ -64,9 +86,19 @@ func (h *AuthHandler) Login(c *gin.Context) {
 }
 
 // Refresh handles token refresh.
-// POST /api/v1/auth/refresh
+//
+//	@Summary		Refresh token
+//	@Description	Get a new token pair using a valid refresh token
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		dto.RefreshRequest	true	"Refresh request"
+//	@Success		200		{object}	response.Response{data=dto.AuthResponse}
+//	@Failure		400		{object}	response.Response
+//	@Failure		401		{object}	response.Response
+//	@Router			/auth/refresh [post]
 func (h *AuthHandler) Refresh(c *gin.Context) {
-	var req request.RefreshRequest
+	var req dto.RefreshRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.BadRequest(c, "Invalid request body", err.Error())
 		return

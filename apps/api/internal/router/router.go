@@ -5,6 +5,8 @@ import (
 	"github.com/gawstxn/makoto/api/internal/middleware"
 	"github.com/gawstxn/makoto/api/internal/service"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // Setup configures all routes for the application.
@@ -14,6 +16,9 @@ func Setup(
 	userHandler *handler.UserHandler,
 	authService service.AuthService,
 ) {
+	// Swagger UI
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	// API v1 group
 	v1 := engine.Group("/api/v1")
 

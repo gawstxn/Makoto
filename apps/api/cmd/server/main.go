@@ -13,7 +13,21 @@ import (
 	"github.com/gawstxn/makoto/api/internal/router"
 	"github.com/gawstxn/makoto/api/internal/service"
 	"github.com/gin-gonic/gin"
+
+	_ "github.com/gawstxn/makoto/api/docs"
 )
+
+//	@title			Makoto API
+//	@version		1.0
+//	@description	Makoto API server with JWT authentication
+
+//	@host		localhost:8080
+//	@BasePath	/api/v1
+
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Authorization
+//	@description				Enter your Bearer token in the format: Bearer {token}
 
 func main() {
 	// Load configuration
@@ -54,6 +68,7 @@ func main() {
 	// Start server
 	addr := ":" + cfg.Server.Port
 	fmt.Printf("🚀 Server starting on http://localhost%s\n", addr)
+	fmt.Printf("📖 Swagger UI: http://localhost%s/swagger/index.html\n", addr)
 	if err := engine.Run(addr); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}

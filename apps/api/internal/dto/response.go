@@ -1,4 +1,4 @@
-package response
+package dto
 
 import (
 	"time"
@@ -7,12 +7,19 @@ import (
 	"github.com/google/uuid"
 )
 
+// AuthResponse represents the authentication response with tokens.
+type AuthResponse struct {
+	AccessToken  string    `json:"access_token" example:"eyJhbGciOiJIUzI1NiIs..."`
+	RefreshToken string    `json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIs..."`
+	ExpiresAt    time.Time `json:"expires_at"`
+}
+
 // UserResponse represents the public user data returned in API responses.
 // It deliberately excludes sensitive fields like password.
 type UserResponse struct {
-	ID        uuid.UUID `json:"id"`
-	Email     string    `json:"email"`
-	Name      string    `json:"name"`
+	ID        uuid.UUID `json:"id" example:"550e8400-e29b-41d4-a716-446655440000"`
+	Email     string    `json:"email" example:"user@example.com"`
+	Name      string    `json:"name" example:"John Doe"`
 	CreatedAt time.Time `json:"created_at"`
 }
 

@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "air",
+    "dev": "swag init -g cmd/server/main.go && air",
     "build": "go build -o ./tmp/main.exe ./cmd/server",
-    "lint": "go vet ./..."
+    "lint": "go vet ./...",
+    "swagger": "swag init -g cmd/server/main.go"
   }
 }
